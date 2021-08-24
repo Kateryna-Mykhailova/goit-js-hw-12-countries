@@ -21,19 +21,19 @@ function onTextInput(e) {
     fetch(`https://restcountries.eu/rest/v2/name/${name}`)
         .then(response => response.json())
         .then(data => renderCollection(data))
-        // .catch(err => console.log(err))
+        .catch(err => console.log(err))
     // .catch(err => error({ text: `По запросу "${name}" ничего не найдено` }))
     // .catch( onError(name))
-        .catch(err => {
-            console.log(err)
-            onError(name)
-        })
+        // .catch(err => {
+        //     console.log(err)
+        //     onError(name)
+        // })
 };
 
-function onError(name) {
+// function onError(name) {
   
-   alert({ text: `По запросу "${name}" ничего не найдено` })
-}
+//    alert({ text: `По запросу "${name}" ничего не найдено` })
+// }
 
 function createCountry({ name, population, flag, capital, languages }) {
    
@@ -92,6 +92,9 @@ function renderCollection(arr) {
         //  console.log('error');
         info({ text: 'Too many matches found. Please enter a more specific query!' })
     }
+    else {
+        error ({ text: 'No results' })
+     }
 }
 
 
