@@ -16,9 +16,43 @@ function onTextInput(e) {
     // console.log(e.target.value);
     fetch(`https://restcountries.eu/rest/v2/name/${name}`)
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => renderCollection(data))
+        // .then(data => console.log(data))
         .catch(err => console.log(err))
+};
+
+function createElement({ name, population, flag, capital, languages}) {
+    // const language = 
+    const article = `
+    <article>
+  <h1>${name}</h1>
+  <img src="${flag}" alt="">
+  <p>${capital}</p>
+  <p>${population}</p>
+  <ul>${languages.name}</ul>
+</article>
+`
+    refs.container.insertAdjacentHTML('beforeBegin', article)
+ }
+
+
+// function leng(languages) {
+//      arr.forEach(el => createElement(el))
+// };
+ 
+function renderCollection(arr) {
+    arr.forEach(el => createElement(el))
 }
+
+
+
+
+
+
+
+
+
+
 //название, столица, население, языки и флаг.
 //name:
 //flag: "https://restcountries.eu/data/pol.svg"
