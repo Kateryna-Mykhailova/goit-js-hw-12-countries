@@ -1,5 +1,6 @@
 import './sass/main.scss';
-import { alert, defaultModules } from '../node_modules/@pnotify/core/dist/PNotify.js';
+import { alert, error, info } from '../node_modules/@pnotify/core/dist/PNotify.js';
+import '@pnotify/core/dist/BrightTheme.css';
 import debounce from 'lodash.debounce';
 
 
@@ -10,22 +11,32 @@ const refs = {
 };
 
 refs.input.addEventListener('input', debounce(onTextInput, 500));
+// let name = '';
 
 function onTextInput(e) {
     e.preventDefault();
-    resetSearch();
+    removeMarkup()
     const name = e.target.value
     // console.log(e.target.value);
     fetch(`https://restcountries.eu/rest/v2/name/${name}`)
         .then(response => response.json())
         .then(data => renderCollection(data))
-        // .then(data => console.log(data))
-        .catch(err => console.log(err))
-   
+        // .catch(err => console.log(err))
+    // .catch(err => error({ text: `По запросу "${name}" ничего не найдено` }))
+    // .catch( onError(name))
+        .catch(err => {
+            console.log(err)
+            onError(name)
+        })
 };
 
+function onError(name) {
+  
+   alert({ text: `По запросу "${name}" ничего не найдено` })
+}
+
 function createCountry({ name, population, flag, capital, languages }) {
-     resetSearch();
+   
     const language = languages.map(el => `<li>${el.name}</li>`).join(' ')
   
     const country = `
@@ -37,22 +48,22 @@ function createCountry({ name, population, flag, capital, languages }) {
   <ul>${language}</ul>
 </article>
 `
-    refs.container.insertAdjacentHTML('beforeBegin', country)
+    refs.container.insertAdjacentHTML('beforeend', country)
  }
 
 
 function createCountries({ name }) {
-     resetSearch();
     const countriesList = `
     <ul>
   <li>${name}</li>
 </ul>
     `
-    refs.container.insertAdjacentHTML('beforeBegin', countriesList)
+    refs.container.insertAdjacentHTML('beforeend', countriesList)
  }
 
-function resetSearch() {
-    refs.container.innerHTML = '';
+function removeMarkup() {
+    // console.log('reset');
+    refs.container.innerHTML = ' ';
 }
 // function leng(languages) {
 //      arr.forEach(el => createElement(el))
@@ -62,21 +73,28 @@ function resetSearch() {
 // function renderCollection(arr) {
 //     arr.forEach(el => createCountry(el))
 // }
+
+// function getCollectionElement(arr) {
+//     arr.forEach(el => return el)
+// }
+
 function renderCollection(arr) {
-      resetSearch()
+ 
     if (arr.length === 1) {
-       
+        // console.log('1');
         arr.forEach(el => createCountry(el))
-        return
     }
-    else if (arr.length <= 10 && arr.length >= 2) {
-       
+    else if (arr.length <= 10 && arr.length > 1) {
+        //  console.log('2');
         arr.forEach(el => createCountries(el))
-        return
     }
-    else{ alert({text: 'Too many matches found. Please enter a more specific query!'}) }
-   
+    else if (arr.length > 10) {
+        //  console.log('error');
+        info({ text: 'Too many matches found. Please enter a more specific query!' })
+    }
 }
+
+
 
 
 
@@ -124,5 +142,3 @@ function renderCollection(arr) {
 // fetch(`https://restcountries.eu/rest/v2/name/{name} = ${value}`)
 
 //
-
-
